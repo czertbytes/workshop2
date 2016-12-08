@@ -1,0 +1,187 @@
+Go Basics 2
+Tags: golang, workshop, avocode
+
+Daniel Hodan
+Avocode
+danielhodan@avocode.com
+http://avocode.com/
+
+* 
+
+.image images/light-logo.svg
+.image images/gopher.png
+
+* Testing
+
+Lightweight test framework included in package `testing`.
+
+File with a name ending in `_test.go` 
+
+    > ls github.com/czertbytes/mypkg
+    mypkg.go    mypkg_test.go
+
+That contains functions named `TestXXX` with signature func `(t` `*testing.T)`.
+
+    func TestMyFunc(t *testing.T) {
+        ...
+    }
+
+Run tests with `go` `test`.
+
+    > go test github.com/czertbytes/mypkg
+    ok  	github.com/czertbytes/mypkg 0.085s
+
+* Testing example
+
+.code -edit test/mypkg_test.go /START OMIT/,/END OMIT/
+
+* Benchmarking
+
+Lightweight test framework included in package `testing`.
+
+File with a name ending in `_test.go` 
+
+    > ls github.com/czertbytes/mypkg
+    mypkg.go    mypkg_test.go
+
+That contains functions named `BenchmarkXXX` with signature func `(b` `*testing.B)`.
+
+    func BenchmarkMyFunc(b *testing.B) {
+        ...
+    }
+
+Run tests with `go` `test` `-bench`
+
+    > go test -bench github.com/czertbytes/mypkg
+    BenchmarkSHA512Hex-4   	   30000	     41735 ns/op
+    PASS
+    ok  	github.com/czertbytes/mypkg	1.669s
+
+* Benchmarking example
+
+.code -edit benchmark/mypkg_test.go /START OMIT/,/END OMIT/
+
+* Remote packages
+
+If you need more than standard library use `go` `get`
+
+    > go get github.com/czertbytes/mypkg
+
+- Download package in $GOPATH/src
+- Compile in $GOPATH/pkg
+- Install binary in $GOPATH/bin
+
+Import as any other package in you $GOPATH
+
+    import "github.com/czertbytes/mypkg"
+
+* Remote packages
+
+What if I have need more versions of given package in one $GOPATH?
+
+- Multiple $GOPATH's
+- Package versioning in URL
+- Vendor package locally in `vendor`
+
+* Remote packages
+
+Vendoring with `vendor` folder - import path is the same.
+
+    import "github.com/czertbytes/mypkg"
+
+Import order: `vendor`, $GOPATH, $GOROOT
+
+    > tree
+    .
+    ├── foo.go
+    ├── foo_test.go
+    └── vendor
+        └── github.com
+            └── czertbytes
+                └── mypkg
+                    ├── mypkg.go
+                    └── mypkg_test.go
+    4 directories, 4 files    
+
+* Concurrency patterns
+
+* WaitGroup
+
+A `WaitGroup` waits for a collection of goroutines to finish.
+
+    var wg sync.WaitGroup
+
+Increase internal counter.
+
+    wg.Add(1)
+
+Decrease internal counter.
+
+    wg.Done()
+
+Wait blocks until counter is 0.
+
+    wg.Wait()
+
+* WaitGroup example
+
+.play waitgroup/waitgroup.go
+
+* Generator
+
+A Generator is function that returns the next value in a sequence each time the function is called.
+
+    for next := range generator() {
+        fmt.Println(next)
+    }
+
+* Generator example
+
+.play -edit generator/generator.go /START OMIT/,/END OMIT/
+
+* Fan-in
+
+A function can read from multiple inputs and proceed until all are closed by multiplexing the input channels onto a single channel that's closed when all the inputs are closed
+
+.image images/gophermegaphones.jpg
+
+* Fan-in example
+
+.play fanin/fanin.go /START OMIT/,/END OMIT/
+
+* Fan-out
+
+Multiple functions can read from the same channel until that channel is closed.
+
+* Fan-out example
+
+.play fanout/fanout.go /START OMIT/,/END OMIT/
+
+* Context
+
+Context allows passing request scoped values, cancelation signals, and deadlines across API boundaries to all the goroutines involved in handling a request.
+
+With value
+
+    ctx := context.WithValue(context.Background(), "key", "value")
+
+With cancel
+
+    ctx, cancel := context.WithCancel(context.Background())
+    defer cancel()
+
+With deadline
+
+    ctx, cancel := context.WithDeadline(context.Background(), deadlineTime)
+    defer cancel()
+
+    ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+    defer cancel()
+
+* Context example
+
+.play -edit context/context.go /START OMIT/,/END OMIT/
+
+* Live coding
+
+* Summary
